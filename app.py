@@ -22,7 +22,7 @@ Base.classes.keys()
 Measurement = Base.classes.measurement
 Station = Base.classes.station
 # Create our session (link) from Python to the DB
-session = Session(engine)
+# session = Session(engine)
 
 Measurement = Base.classes.measurement
 Station = Base.classes.station
@@ -51,11 +51,13 @@ def welcome():
 # Convert the query results to a dictionary using date as the key and prcp as the value. - same query as before (last year of data but in a function).
 @app.route("/api/v1.0/precipitation")
 def precipitation():
+    session = Session(engine)
     # Calculate the date 1 year ago from last date in database
     prev_year = dt.date(2017, 8, 23) - dt.timedelta(days=365)
 #     # Query for the date and precipitation for the last year
     precipitation = session.query(Measurement.date, Measurement.prcp).\
         filter(Measurement.date >= prev_year).all()
+    session.close()
 #     precipitation
 # Return the JSON representation of your dictionary. - jsonify
     precip = {date: prcp for date, prcp in precipitation}
@@ -65,18 +67,29 @@ def precipitation():
 # Return a JSON list of stations from the dataset.
 @app.route("/api/v1.0/stations")
 def stations():
-    stations = session.query(Station).all()
+    session = Session(engine)
+    stations = session.query(Station.station).all()
+    session.close()
     station_results = list(np.ravel(stations))
     return jsonify(station_results)
 
 
 # /api/v1.0/tobs
+@app.route("/api/v1.0/tobs")
 
-
-# Query the dates and temperature observations of the most active station for the last year of data. - join measurement and Station tables here.
-
-
+# Query the dates and temperature observations of the most active station for the last year of data.
 # Return a JSON list of temperature observations (TOBS) for the previous year.
+def results():
+    session = Session(engine)
+    prev_year = dt.date(2017, 8, 23) - dt.timedelta(days=365)
+    results = session.query(Measurement.tobs).\
+        filter(Measurement.station == 'USC00519281').\
+        filter(Measurement.date >= prev_year).all()
+    session.close()
+    # Unravel results into a 1D array and convert to a list
+    temps = list(np.ravel(results))
+    # Return the results
+    return jsonify(temps=temps)
 
 
 
@@ -91,8 +104,8 @@ def stations():
 
 
 # When given the start and the end date, calculate the TMIN, TAVG, and TMAX for dates between the start and end date inclusive.
-
-
+if __name__ == "__main__":
+    app.run(debug=True)
 
 
 
@@ -105,5 +118,3 @@ def stations():
 # Use Flask jsonify to convert your API data into a valid JSON response object.
 
 
-if __name__ == '__main__':
-    app.run(debug=True)
