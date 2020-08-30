@@ -95,10 +95,21 @@ def results():
 
 
 # /api/v1.0/<start> and /api/v1.0/<start>/<end>
-
-
+# @app.route("/api/v1.0/temp/2017-07-28")
+# @app.route("/api/v1.0/temp/2017-07-28/2017-08-05")
+# def calc_temps(start_date, end_date):
+#     session = Session(engine)
+#     start_date = dt.date(2017, 7, 28)
+#     end_date - dt.date(2017, 8, 5)
+#     return session.query(func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)).\
+#     filter(Measurement.date >= start_date).filter(Measurement.date <= end_date).all()
+    
+# # start and end date
+#     print(calc_temps(2017-7-28, 2017-8-5)
 # Return a JSON list of the minimum temperature, the average temperature, and the max temperature for a given start or start-end range.
-
+    # temps = list(np.ravel(calc_temps))
+    # # Return the results
+    # return jsonify(temps=temps)
 
 # When given the start only, calculate TMIN, TAVG, and TMAX for all dates greater than and equal to the start date.
 
