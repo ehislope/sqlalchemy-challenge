@@ -50,35 +50,24 @@ def welcome():
 # /api/v1.0/precipitation
 # Convert the query results to a dictionary using date as the key and prcp as the value. - same query as before (last year of data but in a function).
 @app.route("/api/v1.0/precipitation")
-def precipitation(): 
-#     # query last year of data precipitation data
-#     precip_data = session.query(Measurement.date, Measurement.prcp).filter(Measurement.date >= '2016-08-24').filter\
-#               (Measurement.date <= '2017-08-23').all()
-#     print(precip_data)
-#     precip = []
-#     for date,prcp in precip_data:
-#         precip_dict = {}
-#         precip_dict["date"] = date
-#         precip_dict["precipitation"] = prcp
-#         precip.append(precip_dict) 
-#     return jsonify(precip)
-    
-
-
-# def precipitation():
-    """Return the precipitation data for the last year"""
+def precipitation():
     # Calculate the date 1 year ago from last date in database
     prev_year = dt.date(2017, 8, 23) - dt.timedelta(days=365)
-    # Query for the date and precipitation for the last year
+#     # Query for the date and precipitation for the last year
     precipitation = session.query(Measurement.date, Measurement.prcp).\
         filter(Measurement.date >= prev_year).all()
+#     precipitation
 # Return the JSON representation of your dictionary. - jsonify
     precip = {date: prcp for date, prcp in precipitation}
     return jsonify(precip)
     
 # /api/v1.0/stations 
 # Return a JSON list of stations from the dataset.
-
+@app.route("/api/v1.0/stations")
+def stations():
+    stations = session.query(Station).all()
+    station_results = list(np.ravel(stations))
+    return jsonify(station_results)
 
 
 # /api/v1.0/tobs
