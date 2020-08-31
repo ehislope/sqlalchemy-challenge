@@ -118,7 +118,7 @@ def calc_temps(start=None, end=None):
         filter(Measurement.date <= end).all()
     # Unravel results into a 1D array and convert to a list
         session.close()
-        temps = list(np.ravel(results_too))
+        temps = list(np.ravel(results))
         return jsonify(temps=temps)
 # When given the start only, calculate TMIN, TAVG, and TMAX for all dates greater than and equal to the start date.
     
@@ -129,12 +129,6 @@ if __name__ == "__main__":
 
 
 
-# Hints
 
-
-# You will need to join the station and measurement tables for some of the queries.
-
-
-# Use Flask jsonify to convert your API data into a valid JSON response object.
 
 
