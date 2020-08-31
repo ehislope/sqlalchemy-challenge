@@ -43,7 +43,8 @@ def welcome():
         f"<a href='/api/v1.0/precipitation'>Precipitation</a><br/>"
         f"<a href='/api/v1.0/stations'>Stations</a><br/>"
         f"<a href='/api/v1.0/tobs'>TOBS</a><br/>"
-        f"<a href='/api/v1.0/temp'>Start/End</a><br/>"
+        f"<a href='/api/v1.0/temp/start'>Start</a><br/>"
+        f"<a href='/api/v1.0/temp/start/end'>Start/End</a><br/>"
     )
 
 
@@ -95,24 +96,32 @@ def results():
 
 
 # /api/v1.0/<start> and /api/v1.0/<start>/<end>
-# @app.route("/api/v1.0/temp/2017-07-28")
-# @app.route("/api/v1.0/temp/2017-07-28/2017-08-05")
-# def calc_temps(start_date, end_date):
-#     session = Session(engine)
-#     start_date = dt.date(2017, 7, 28)
-#     end_date - dt.date(2017, 8, 5)
-#     return session.query(func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)).\
-#     filter(Measurement.date >= start_date).filter(Measurement.date <= end_date).all()
-    
-# # start and end date
-#     print(calc_temps(2017-7-28, 2017-8-5)
-# Return a JSON list of the minimum temperature, the average temperature, and the max temperature for a given start or start-end range.
-    # temps = list(np.ravel(calc_temps))
-    # # Return the results
-    # return jsonify(temps=temps)
-
+@app.route("/api/v1.0/temp/start")
+@app.route("/api/v1.0/temp/start/end")
+def calc_temps(start=None, end=None):
+    session = Session(engine)
+    sel = [func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)]
+    start = ("2017-07-28")
+    end = ('2017-08-05')
+    if not end:
+        # calculate TMIN, TAVG, TMAX for dates greater than start
+        
+        results = session.query(sel).\
+            filter(Measurement.date >= start).all()
+        
+        temps = list(np.ravel(results))
+        return jsonify(temps)
+    # calculate TMIN, TAVG, TMAX with start and stop
+    if end:
+        results = session.query(sel).\
+        filter(Measurement.date >= start).\
+        filter(Measurement.date <= end).all()
+    # Unravel results into a 1D array and convert to a list
+        session.close()
+        temps = list(np.ravel(results_too))
+        return jsonify(temps=temps)
 # When given the start only, calculate TMIN, TAVG, and TMAX for all dates greater than and equal to the start date.
-
+    
 
 # When given the start and the end date, calculate the TMIN, TAVG, and TMAX for dates between the start and end date inclusive.
 if __name__ == "__main__":
