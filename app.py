@@ -102,7 +102,6 @@ def calc_temps(start=None, end=None):
     session = Session(engine)
     start = ("2017-07-28")
     end = ('2017-08-05')
-    # sel = [func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)]
     if not end:
         # calculate TMIN, TAVG, TMAX for dates greater than start
         results = session.query(func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)).\
