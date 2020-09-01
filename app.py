@@ -100,20 +100,19 @@ def results():
 @app.route("/api/v1.0/temp/start/end")
 def calc_temps(start=None, end=None):
     session = Session(engine)
-    sel = [func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)]
     start = ("2017-07-28")
     end = ('2017-08-05')
+    # sel = [func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)]
     if not end:
         # calculate TMIN, TAVG, TMAX for dates greater than start
-        
-        results = session.query(sel).\
+        results = session.query(func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)).\
             filter(Measurement.date >= start).all()
-        
+        session.close()
         temps = list(np.ravel(results))
         return jsonify(temps)
     # calculate TMIN, TAVG, TMAX with start and stop
     if end:
-        results = session.query(sel).\
+        results = session.query(func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)).\
         filter(Measurement.date >= start).\
         filter(Measurement.date <= end).all()
     # Unravel results into a 1D array and convert to a list
